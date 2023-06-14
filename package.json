@@ -1,6 +1,6 @@
 {
   "name": "zustand-middleware-computed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "https://github.com/lxw15337674/zustand-middleware-computed",
   "author": "bhwa233",
   "license": "MIT",
@@ -17,6 +17,7 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.module.js",
   "unpkg": "./dist/index.umd.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "pnpm run clean && microbundle",
     "dev": "microbundle watch",
