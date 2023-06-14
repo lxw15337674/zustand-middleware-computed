@@ -13,6 +13,9 @@
     "require": "./dist/index.cjs",
     "default": "./dist/index.modern.js"
   },
+  "engines": {
+    "node": "^16"
+  },
   "description": "A micro minimalist template to publish TypeScript packages with `microbundle`",
   "main": "./dist/index.cjs",
   "module": "./dist/index.module.js",
