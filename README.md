@@ -1,4 +1,4 @@
-`zustand-middleware-computed`: A Zustand middle for adding computed state
+`zustand-middleware-computed`: A Zustand middleware for adding computed state
 
 ## Features 
 
