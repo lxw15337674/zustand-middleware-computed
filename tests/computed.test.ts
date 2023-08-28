@@ -1,4 +1,4 @@
-import computed from '../src';
+import { computed } from '../computed';
 import { create } from 'zustand';
 
 type Store = {
@@ -12,102 +12,85 @@ type ComputedStore = {
   nameLen: number;
 };
 
-describe('default config', () => {
-  const makeStore = () =>
-    create(
-      computed<Store, ComputedStore>(
-        () => ({
-          firstName: 'Zhang',
-          lastName: 'San',
-          age: 10,
-        }),
-        {
-          nameLen: (state) => {
-            return state.fullName.length;
-          },
-          fullName: (state) => {
-            return state.firstName + state.lastName;
-          },
+const makeStore = (nameLenStub = () => {}, fullNameStub = () => {}) =>
+  create(
+    computed<Store, ComputedStore>(
+      () => ({
+        firstName: 'Zhang',
+        lastName: 'San',
+        age: 10,
+      }),
+      {
+        nameLen: (state) => {
+          nameLenStub();
+          return state.fullName.length;
         },
-      ),
-    );
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+        fullName: (state) => {
+          fullNameStub();
+          return state.firstName + state.lastName;
+        },
+      },
+    ),
+  );
 
-  test('update state', () => {
-    const useStore = makeStore();
-    expect(useStore.getState().fullName).toEqual('ZhangSan');
-    expect(useStore.getState().nameLen).toEqual(8);
-    useStore.setState({ firstName: 'Li' });
-    useStore.setState({ lastName: 'Si' });
-    expect(useStore.getState().fullName).toEqual('LiSi');
-    expect(useStore.getState().nameLen).toEqual(4);
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+describe('basic', () => {
+  test('update', () => {
+    const store = makeStore();
+    expect(store.getState().fullName).toEqual('ZhangSan');
+    expect(store.getState().nameLen).toEqual(8);
+    store.setState({ firstName: 'Li' });
+    store.setState({ lastName: 'Si' });
+    expect(store.getState().fullName).toEqual('LiSi');
+    expect(store.getState().nameLen).toEqual(4);
   });
 
   test('subscribe', () => {
-    const useStore = makeStore();
-    useStore.subscribe(() => {
-      expect(useStore.getState().fullName).toEqual('LiSan');
-      expect(useStore.getState().nameLen).toEqual(5);
+    const store = makeStore();
+    store.subscribe(() => {
+      expect(store.getState().fullName).toEqual('LiSan');
+      expect(store.getState().nameLen).toEqual(5);
     });
-    useStore.setState({ firstName: 'Li' });
+    store.setState({ firstName: 'Li' });
   });
 });
 
 describe('lazy & memo', () => {
-  it('should be lazy', () => {
+  it('should lazy init until first read value', () => {
     /**
      * computed 在首次被访问时才会首次计算
      */
     const fn = jest.fn();
-    const useStore = create(
-      computed<{ count: number }, { double: number }>(
-        () => ({
-          count: 0,
-        }),
-        {
-          double: (state) => {
-            fn();
-            return state.count * 2;
-          },
-        },
-      ),
-    );
+    const store = makeStore(fn);
     expect(fn).toBeCalledTimes(0);
-    const a = useStore.getState().double;
+    const a = store.getState().nameLen;
     expect(fn).toBeCalledTimes(1);
   });
 
-  it('should be memo', () => {
+  it('should get from memo when state no change', () => {
     /**
      * computed 在被计算后，若依赖未发生变化，不会重新计算
      */
     const fn = jest.fn();
-    const useStore = create(
-      computed<{ count: number }, { double: number }>(
-        () => ({
-          count: 0,
-        }),
-        {
-          double: (state) => {
-            fn();
-            return state.count * 2;
-          },
-        },
-      ),
-    );
+    const store = makeStore(fn);
     expect(fn).toBeCalledTimes(0);
-    const a = useStore.getState().double;
+    const a = store.getState().nameLen;
     expect(fn).toBeCalledTimes(1);
     // 依赖未发生变化，不会重新计算
-    const b = useStore.getState().double;
+    const b = store.getState().nameLen;
     expect(fn).toBeCalledTimes(1);
-    // 更新依赖
-    useStore.setState({ count: 1 });
+    // 更新不想管的依赖，不会重新计算
+    store.setState({ age: 20 });
+    const c = store.getState().nameLen;
+    expect(fn).toBeCalledTimes(1);
+    // 更新所依赖的状态
+    store.setState({ firstName: 'Li', lastName: 'Si' });
     // 再次访问触发重新计算
-    const c = useStore.getState().double;
+    const d = store.getState().nameLen;
     expect(fn).toBeCalledTimes(2);
-    expect(c).toEqual(2);
+    expect(d).toEqual(4);
   });
 });
