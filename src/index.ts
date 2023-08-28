@@ -30,13 +30,16 @@ const computed = <T extends object, A extends object>(
       {} as T & A,
     );
 
+    const withComputed = (state: T) =>
+      Object.assign(shallowClone(computedState), state);
+
     let lastState: T & A;
     let isChanged = true;
     api.getState = () => {
       if (!isChanged) {
         return lastState;
       }
-      lastState = Object.assign(shallowClone(computedState), get());
+      lastState = withComputed(get());
       isChanged = false;
       return lastState;
     };
@@ -44,6 +47,15 @@ const computed = <T extends object, A extends object>(
       set(state, replace);
       isChanged = true;
     };
+    const { subscribe } = api;
+    api.subscribe = (listener) => {
+      return subscribe((state, prevState) => {
+        listener(
+          withComputed(state),
+          withComputed(prevState),
+        );
+      });
+    }
     const st = f(api.setState, get, api);
     return st as T & A;
   };

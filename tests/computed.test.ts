@@ -50,9 +50,11 @@ describe('basic', () => {
 
   test('subscribe', () => {
     const store = makeStore();
-    store.subscribe(() => {
-      expect(store.getState().fullName).toEqual('LiSan');
-      expect(store.getState().nameLen).toEqual(5);
+    store.subscribe((state, prevState) => {
+      expect(state.fullName).toEqual('LiSan');
+      expect(state.nameLen).toEqual(5);
+      expect(prevState.fullName).toEqual('ZhangSan');
+      expect(prevState.nameLen).toEqual(8);
     });
     store.setState({ firstName: 'Li' });
   });
@@ -70,7 +72,7 @@ describe('lazy & memo', () => {
     expect(fn).toBeCalledTimes(1);
   });
 
-  it('should get from memo when state no change', () => {
+  it('should get from memo when state not change', () => {
     /**
      * computed 在被计算后，若依赖未发生变化，不会重新计算
      */
@@ -82,7 +84,7 @@ describe('lazy & memo', () => {
     // 依赖未发生变化，不会重新计算
     const b = store.getState().nameLen;
     expect(fn).toBeCalledTimes(1);
-    // 更新不想管的依赖，不会重新计算
+    // 更新不相关的依赖，不会重新计算
     store.setState({ age: 20 });
     const c = store.getState().nameLen;
     expect(fn).toBeCalledTimes(1);
