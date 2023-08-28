@@ -1,5 +1,7 @@
-import { computed } from '../computed';
+import React from 'react';
 import { create } from 'zustand';
+import { renderHook } from '@testing-library/react-hooks';
+import { computed } from '../computed';
 
 type Store = {
   firstName: string;
@@ -57,6 +59,20 @@ describe('basic', () => {
       expect(prevState.nameLen).toEqual(8);
     });
     store.setState({ firstName: 'Li' });
+  });
+
+  test('useStore', () => {
+    const store = makeStore();
+    const { result } = renderHook(
+      () => {
+        const fullName = useStore(store, (state) => state.fullName);
+        React.useEffect(() => {
+          store.setState({ firstName: 'Li' });
+        }, []);
+        return fullName;
+      },
+    );
+    expect(result.current).toBe('LiSan');
   });
 });
 
