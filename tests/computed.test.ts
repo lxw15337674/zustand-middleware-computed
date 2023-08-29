@@ -1,7 +1,7 @@
 import React from 'react';
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { renderHook } from '@testing-library/react-hooks';
-import { computed } from '../computed';
+import computed from '../src/index';
 
 type Store = {
   firstName: string;
