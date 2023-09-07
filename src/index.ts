@@ -44,9 +44,9 @@ const computed = <T extends object, A extends object>(
       return lastState;
     };
     api.setState = (state, replace) => {
-      isChanged = true;
-      set(state, replace);
-    };
+        set(state, replace)
+        isChanged = true
+    }
     const { subscribe } = api;
     api.subscribe = (listener) => {
       return subscribe((state, prevState) => {

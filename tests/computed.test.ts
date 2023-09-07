@@ -18,16 +18,12 @@ type ComputedStore = {
 const makeStore = (nameLenStub = () => {}, fullNameStub = () => {}) =>
     create(
         computed<Store, ComputedStore>(
-            () => ({
+            (set, get) => ({
                 firstName: 'Zhang',
                 lastName: 'San',
                 age: 10,
                 incrementAge: () => {
-                    return (state) => {
-                        return {
-                            age: state.age + 1,
-                        }
-                    }
+                    set((state) => ({ age: state.age + 1 }))
                 },
             }),
             {
@@ -76,14 +72,16 @@ describe('basic', () => {
 
     test('useStore', () => {
         const store = makeStore()
-        const { result } = renderHook(() => {
-            const fullName = useStore(store, (state) => state.fullName)
-            React.useEffect(() => {
-                store.setState({ firstName: 'Li' })
-            }, [])
-            return fullName
+        const { result, rerender } = renderHook(() => {
+            const state = useStore(store)
+            return state
         })
-        expect(result.current).toBe('LiSan')
+        result.current.incrementAge()
+        rerender()
+        expect(result.current.age).toBe(11)
+        result.current.incrementAge()
+        rerender()
+        expect(result.current.age).toBe(12)
     })
 })
 
