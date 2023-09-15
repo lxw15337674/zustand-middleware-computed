@@ -1,6 +1,6 @@
 {
   "name": "zustand-middleware-computed",
-  "version": "1.1.2",
+  "version": "1.1.4-pre",
   "repository": "https://github.com/lxw15337674/zustand-middleware-computed",
   "author": "bhwa233",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "default": "./dist/index.modern.js"
   },
   "engines": {
-    "node": "^16"
+    "node": ">=16"
   },
   "description": "A micro minimalist template to publish TypeScript packages with `microbundle`",
   "main": "./dist/index.cjs",
