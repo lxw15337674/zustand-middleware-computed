@@ -27,7 +27,7 @@
     "lint": "eslint ./src --ext .ts",
     "clean": "rimraf dist",
     "test": "jest ./tests",
-    "publish": "np --no-tests"
+    "publish": "np "
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.6",
