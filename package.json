@@ -27,7 +27,10 @@
     "lint": "eslint ./src --ext .ts",
     "clean": "rimraf dist",
     "test": "jest ./tests",
-    "publish": "np "
+    "deploy": "np "
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.6",
