@@ -9,7 +9,7 @@ function shallowClone<T extends Record<string, any>>(obj: T): T {
     return Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj))
 }
 
-export const computed = <T extends object, A extends object>(
+const computed = <T extends object, A extends object>(
     f: StateCreator<T>,
     compute: Computed<T, A>
 ): StateCreator<T & A, [], []> => {
