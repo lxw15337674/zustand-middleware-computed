@@ -103,7 +103,7 @@ describe('lazy & memo', () => {
          */
         const fn = jest.fn()
         const store = makeStore(fn)
-        expect(fn).toBeCalledTimes(1)
+        expect(fn).toBeCalledTimes(0)
         const a = store.getState().nameLen
         expect(fn).toBeCalledTimes(1)
         // 依赖未发生变化，不会重新计算
